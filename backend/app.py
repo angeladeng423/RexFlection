@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 # Import new APIs here!
 from app.api.yolo_api import yolo_api, echo_api
+from app.api.cohere_api import cohere_api
 
 app = Flask(__name__)
 
@@ -12,6 +13,7 @@ CORS(app)
 # Register the YOLO API Blueprint
 app.register_blueprint(yolo_api, url_prefix='/api')
 app.register_blueprint(echo_api, url_prefix='/api')
+app.register_blueprint(cohere_api, url_prefix='/api')
 
 # Simple GET API endpoint
 @app.route('/api/greet', methods=['POST'])
