@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 import os
 import cohere
-from ..modules.recognizer import YOLORecognizers
+from ..modules.recognizer import YOLORecognizer
 
 yolor = YOLORecognizer()
 

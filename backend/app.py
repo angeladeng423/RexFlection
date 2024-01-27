@@ -2,7 +2,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 # Import new APIs here!
-from app.api.yolo_api import yolo_api, echo_api, cohere_api
+from app.api.yolo_api import yolo_api, echo_api
+from app.api.cohere_api import cohere_api
 
 app = Flask(__name__)
 
