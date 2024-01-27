@@ -14,22 +14,27 @@ co = cohere.Client(cohere_api_key)
 
 @cohere_api.route('/cohere', methods=['POST'])
 def cohere_route():
-
     try:
-        image_data = request.files['image'].read()
-        objects = yolor.recognize(image_data)
+        images_data = request.files.getlist('image')
+        results = []
 
-        response = co.generate(
-            model='command', 
-            prompt='Given a dictionary of everyday objects and their quantity for example {1: bus, 4: people} extracted from a photo, give a story-like description, do not use key words that aren\'t in the dictionary or do not assume anything that isn\'t already given in the dictionary. Do not give expression of people if they are in image. Don\'t start with \"this is a picture\" rather begin story telling right away, do not use first or second person, give short summary . Example output would have keywords: city, busy, etc. Now try for ' + str(objects),
-            max_tokens=300,
-            temperature=0.9,
-            k=0,
-            stop_sequences=[],
-            return_likelihoods='NONE')
+        for i, image_data in enumerate(images_data):
+            objects = yolor.recognize(image_data.read())
+            output = co.generate(
+                model='command',
+                prompt='Given a dictionary of everyday objects and their quantity for example {1: bus, 4: people} extracted from a photo, give a story-like description, do not use key words that aren\'t in the dictionary or do not assume anything that isn\'t already given in the dictionary. Do not give expression of people if they are in image. Don\'t start with \"this is a picture\" rather begin story telling right away, do not use first or second person, give short summary . Example output would have keywords: city, busy, etc. Now try for ' + str(objects),
+                max_tokens=300,
+                temperature=0.9,
+                k=0,
+                stop_sequences=[],
+                return_likelihoods='NONE'
+            )
 
-        return jsonify({'prediction': response.generations[0].text})
+            generations_dict = {'text': output.generations[0].text}
+            result = {'image_index': i, 'prediction': generations_dict}
+            results.append(result)
+
+        return jsonify({'results': results})
 
     except Exception as e:
-        return jsonify(error=str(e))
-
+        return jsonify({'error': str(e)})
