@@ -10,7 +10,7 @@
     font-size: 15px;
 }
 
-.navBar p{
+.navBar p, .navBar #logout{
     margin-left: 10vw;
 }
 
