@@ -26,17 +26,37 @@ export default function ImageUploader() {
         const accessToken = res.accessToken;
         console.log("Access Token:", accessToken);
 
+        sendToken(accessToken)
+
         gapi.client.setToken({access_token: accessToken});
+    }
+
+    async function retrieveImages(token){
+        const response = await fetch(`http://localhost:5000/api/getAlbumItems`, {
+            method: 'GET',
+            header: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token: token })
+        })
     }
 
     async function sendToken(token) {
         try {
-          const response = await fetch(
-            `https://localhost:5000/sendToken`
-          );
+            const response = await fetch(`http://localhost:5000/api/getAlbumID`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: token })
+              });
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+
+          const data = await response.json();
+          console.log(data)
+
         } catch (error) {
           console.log('error', error);
         }
