@@ -5,8 +5,8 @@ import "./GalleryBg.css";
 export default function GalleryBg(){
     const canvasRef = useRef(null)
     const dinoRef = useRef(null)
-    const CANVAS_WIDTH = 400
-    const CANVAS_HEIGHT = 400
+    const CANVAS_WIDTH = 1000
+    const CANVAS_HEIGHT = 600
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -17,7 +17,7 @@ export default function GalleryBg(){
     return(
         <div>
             <canvas ref = {canvasRef} id = "galleryCanvas" width = {CANVAS_WIDTH} height = {CANVAS_HEIGHT}></canvas>
-            <Dino canvasRef = {canvasRef}/>
+            <Dino canvasRef = {canvasRef} canvasHeight={CANVAS_HEIGHT} canvasWidth={CANVAS_WIDTH}/>
         </div>
     )
 }
