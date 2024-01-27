@@ -21,7 +21,7 @@ def cohere_route():
 
         response = co.generate(
             model='command', 
-            prompt='Given a dictionary of everyday objects and their quantity for example {1: bus, 4: people} extracted from a photo, give a story-like description, do not use key words that aren\'t in the dictionary or do not assume anything that isn\'t already given in the dictionary. Do not give expression of people if they are in image. Don\'t start with \"this is a picture\" rather begin story telling right away, do not use first or second person, give short summary . Example output would have keywords: city, busy, etc. Now try for ' + objects,
+            prompt='Given a dictionary of everyday objects and their quantity for example {1: bus, 4: people} extracted from a photo, give a story-like description, do not use key words that aren\'t in the dictionary or do not assume anything that isn\'t already given in the dictionary. Do not give expression of people if they are in image. Don\'t start with \"this is a picture\" rather begin story telling right away, do not use first or second person, give short summary . Example output would have keywords: city, busy, etc. Now try for ' + str(objects),
             max_tokens=300,
             temperature=0.9,
             k=0,
