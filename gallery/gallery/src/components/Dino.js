@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import dinoRun1 from "../assets/dinoRun1.png";
 import dinoRun2 from "../assets/dinoRun2.png";
 import dinoStill from "../assets/dinoStill.png";
-import tempbg from "../assets/tempbg.jpg";
+import tempbg from "../assets/tempbg.png";
 
 import image1 from "../assets/image1.png";
 import image2 from "../assets/image2.png";
@@ -24,6 +24,12 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
     const backgroundImg = useRef(new Image());
     const galImage = useRef(new Image());
     const secondGalImage = useRef(new Image());
+    const imagePosition = useRef(400)
+
+    const velocity = useRef(0); // Current vertical velocity
+    const gravity = -2; // Gravity applied each frame
+
+    const jumpVelocity = 30;
 
     const galImagePosition = useRef(160)
     const galImageSecondPosition = useRef(160 + canvasWidth)
@@ -57,6 +63,17 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
             galImagePosition.current += 5;
             galImageSecondPosition.current += 5;
         }
+        if (keysPressed.current['ArrowUp'] && imagePosition.current >= 500) {
+            velocity.current = jumpVelocity;
+        }
+    
+        velocity.current += gravity;
+        imagePosition.current -= velocity.current;
+    
+        if (imagePosition.current > 500) {
+            imagePosition.current = 500;
+            velocity.current = 0;
+        }
 
         if (backgroundPosition.current < -canvasWidth) {
             backgroundPosition.current += canvasWidth;
@@ -88,12 +105,12 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
         ctx.drawImage(backgroundImg.current, backgroundPosition.current, 0, canvasWidth, canvasHeight - 100);
         ctx.drawImage(backgroundImg.current, backgroundPosition.current + canvasWidth, 0, canvasWidth, canvasHeight - 100);
 
-        ctx.drawImage(galImage.current, galImagePosition.current, 120, 190, 200)
-        ctx.drawImage(galImage.current, galImagePosition.current + canvasWidth, 120, 190, 200)
-        ctx.drawImage(secondGalImage.current, galImageSecondPosition.current, 120, 190, 200);
-        ctx.drawImage(secondGalImage.current, galImageSecondPosition.current + canvasWidth, 120, 190, 200);
+        ctx.drawImage(galImage.current, galImagePosition.current, 115, 190, 205)
+        ctx.drawImage(galImage.current, galImagePosition.current + canvasWidth, 115, 190, 205)
+        ctx.drawImage(secondGalImage.current, galImageSecondPosition.current, 115, 190, 205);
+        ctx.drawImage(secondGalImage.current, galImageSecondPosition.current + canvasWidth, 115, 190, 205);
     
-        ctx.drawImage(image.current, 150, 500, 50,50)
+        ctx.drawImage(image.current, 150, imagePosition.current, 50,50)
     }
 
     function changeDinoImage(){
@@ -109,7 +126,7 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
             updatePosition();
             moveBackground();
             changeDinoImage()
-        }, 20);
+        }, 30);
 
         return () => clearInterval(interval);
     }, [currentImg]);

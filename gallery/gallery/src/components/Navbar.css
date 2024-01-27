@@ -1,0 +1,20 @@
+.navBar{
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 10vh;
+    background-color: #424242;
+    border-bottom: solid black 1px;
+    color: white;
+    font-family: 'inter';
+    font-size: 15px;
+}
+
+.navBar p{
+    margin-left: 10vw;
+}
+
+.navBar p:hover{
+    cursor: pointer;
+    color: #C6C6C6;
+}

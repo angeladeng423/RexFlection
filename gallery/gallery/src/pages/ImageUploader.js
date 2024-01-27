@@ -1,5 +1,7 @@
 import React from "react";
-import Gallery from "../components/GalleryBg";
+import { useNavigate } from 'react-router-dom';
+import forest from "../assets/forest.png";
+import Navbar from "../components/Navbar";
 import "./ImageUploader.css";
 
 import { gapi } from 'gapi-script';
@@ -7,6 +9,11 @@ import { useEffect } from "react";
 import { GoogleLogin } from 'react-google-login';
 
 export default function ImageUploader() {
+    const navigate = useNavigate();
+    function navTo(){
+        navigate('/gallery')
+    }
+
     const clientId = "1044768649244-j1qtke8g728no98ug6qrsu276qt6tmld.apps.googleusercontent.com"
 
     useEffect(() => {
@@ -27,6 +34,7 @@ export default function ImageUploader() {
         console.log("Access Token:", accessToken);
 
         sendToken(accessToken)
+        navTo()
 
         gapi.client.setToken({access_token: accessToken});
     }
@@ -39,6 +47,10 @@ export default function ImageUploader() {
             },
             body: JSON.stringify({ token: token })
         })
+
+        const data = await response.json();
+        console.log(data)
+
     }
 
     async function sendToken(token) {
@@ -68,14 +80,24 @@ export default function ImageUploader() {
 
     return (
         <div className="image-uploader">
-            <GoogleLogin
-                clientId = {clientId}
-                buttonText="Login"
-                onSuccess={onSuccess}
-                onFailure={onFailure}
-                cookiePolicy={'single_host_origin'}
-                isSignedIn={true}/>
-            <Gallery/>
+            <Navbar></Navbar>
+            <div id = "login">
+                <GoogleLogin
+                    clientId = {clientId}
+                    buttonText="Create Your Rewind!"
+                    onSuccess={onSuccess}
+                    onFailure={onFailure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={true}/>
+
+                </div>
+            <img id = "forest" src = {forest}></img>
+            <section>
+                <div className="wave wave1"/>
+                <div className="wave wave2"/>
+                <div className="wave wave3"/>
+                <div className="wave wave4"/>
+            </section>
         </div>
     );
 }

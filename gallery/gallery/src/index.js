@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import Gallery from './pages/Gallery';
 import ImageUploader from './pages/ImageUploader';
 
 import './index.css';
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     path: "/upload",
     element: <ImageUploader/>
   },
+  {
+    path: "/gallery",
+    element: <Gallery/>
+  }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

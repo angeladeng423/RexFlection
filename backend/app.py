@@ -64,9 +64,9 @@ def accessImages():
         # Handle other exceptions
         return jsonify({'error': 'An error occurred'}), 500
 
-@app.route('/getAlbumItems', methods=['GET'])
+@app.route('/api/getAlbumItems', methods=['GET'])
 def albumItems():
-    print("hello")
+    return jsonify({'test': 'Test'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
