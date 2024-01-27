@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 import cohere
+import cloudsight
 
 
 # app = Flask(__name__)
@@ -12,7 +13,6 @@ import cohere
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
-import cohere
 co = cohere.Client('vpjPrYb88x5C7XMrgkGISxAeNAjotry4K8WpR7O0') # This is your trial API key
 response = co.generate(
   model='command',
