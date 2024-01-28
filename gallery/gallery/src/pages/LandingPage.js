@@ -12,6 +12,7 @@ export default function LandingPage(){
     return(
         <div id = "landingPage">
             <div id = "title">
+                <h1>REXFLECTION</h1>
                 <h1>Take A Walk Down Memory Lane.</h1>
                 <p>2023 wrapped? no problem.</p>
                 <div id = "purple" className = "rectangle"></div>
