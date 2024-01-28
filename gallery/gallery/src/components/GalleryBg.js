@@ -15,7 +15,7 @@ export default function GalleryBg(){
 
 
     return(
-        <div>
+        <div id = "centering">
             <canvas ref = {canvasRef} id = "galleryCanvas" width = {CANVAS_WIDTH} height = {CANVAS_HEIGHT}></canvas>
             <Dino canvasRef = {canvasRef} canvasHeight={CANVAS_HEIGHT} canvasWidth={CANVAS_WIDTH}/>
         </div>

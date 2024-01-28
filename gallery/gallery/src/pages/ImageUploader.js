@@ -4,6 +4,7 @@ import forest from "../assets/forest.png";
 import Navbar from "../components/Navbar";
 import "./ImageUploader.css";
 
+import DescriptionContext from "../context/DescriptionContext";
 import ImageContext from "../context/ImageContext";
 
 import { gapi } from 'gapi-script';
@@ -12,6 +13,7 @@ import { GoogleLogin } from 'react-google-login';
 
 export default function ImageUploader() {
     const {uriList, addUri, removeUri} = useContext(ImageContext)
+    const {descList, addDesc, removeDesc} = useContext(DescriptionContext)
 
     const navigate = useNavigate();
     function navTo(){
@@ -40,14 +42,14 @@ export default function ImageUploader() {
         // Set the token for gapi client
         gapi.client.setToken({ access_token: accessToken });
     
-        sendToken(accessToken).then(() => {
-            navTo();
-        }).catch(error => {
+        sendToken(accessToken).catch(error => {
             console.error('Error during sendToken or retrieveImages', error);
         });
     }
 
     async function retrieveDescription() {
+        const descriptions = [];
+
         for (const item of uriList[0]) {
             try {
                 const response = await fetch('http://localhost:5000/api/recognize_objects', {
@@ -61,11 +63,30 @@ export default function ImageUploader() {
                 });
     
                 const data = await response.json();
-                console.log(data);
+                console.log(data, "test")
+                try {
+                    const response = await fetch('http://localhost:5000/api/cohere_caption', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+
+                    const final = await response.json()
+                    descriptions.push(final);
+                } catch (err){
+                    console.log(err)
+                }
+    
             } catch (error) {
                 console.error("ERROR:", error);
             }
         }
+    
+        // Update the context with all descriptions in one go
+        addDesc(descriptions); // Assuming addDesc can handle an array of descriptions
+        console.log(descriptions);
     }
     
     async function retrieveImages(token, albumId) {
@@ -85,13 +106,19 @@ export default function ImageUploader() {
             const data = await response.json();
 
             await addUri(data.photo_uris);
-            await retrieveDescription();
-            navTo();
-    
         } catch (error) {
             console.error('Error fetching album photos:', error);
         }
     }
+
+    useEffect(() => {
+        if (uriList[0] && uriList[0].length > 0) {
+          retrieveDescription().then(() => {
+            navTo();
+          });
+        }
+      }, [uriList, addDesc, navTo]);
+      
 
     async function sendToken(token) {
         try {

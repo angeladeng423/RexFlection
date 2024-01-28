@@ -4,15 +4,22 @@ import dinoRun2 from "../assets/dinoRun2.png";
 import dinoStill from "../assets/dinoStill.png";
 import endBg from "../assets/endBg.png";
 import tempbg from "../assets/tempbg.png";
+import DescriptionContext from "../context/DescriptionContext";
 import ImageContext from "../context/ImageContext";
+import "./Dino.css";
 
 export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
     const { uriList } = useContext(ImageContext);
-    
+    const { descList } = useContext(DescriptionContext);
+
+    const [typedText, setTypedText] = useState('');
+    const [charIndex, setCharIndex] = useState(0);   
+
     const [reachedEnd, setReachedEnd] = useState(false);
     const [currentImg, setCurrentImg] = useState(dinoStill);
 
     const [imagesLoaded, setImagesLoaded] = useState(false);
+    const [accessedIndex, setAccessedIndex] = useState(-1)
 
     const [galImageIndex, setGalImageIndex] = useState(0);
     const [secondImageIndex, setSecondImageIndex] = useState(2);
@@ -39,6 +46,30 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
     const lowerImagePosition = useRef(627);
     const nextLowerImagePosition = useRef(627 + canvasWidth);
     const galImageSecondPosition = useRef(160 + canvasWidth);
+
+    const typeCharacter = () => {
+        if (descList[0] && accessedIndex < descList[0].length) {
+            const fullText = descList[0][accessedIndex].output ? descList[0][accessedIndex].output : "The trial API key was exceeded.";
+            if (charIndex < fullText.length) {
+                setTypedText(typedText => typedText + fullText[charIndex]);
+                setCharIndex(charIndex => charIndex + 1);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const typingInterval = setInterval(() => {
+          typeCharacter();
+        }, 50); // Adjust the typing speed by changing the interval duration
+      
+        return () => clearInterval(typingInterval);
+    }, [descList, accessedIndex, charIndex]);  
+    
+    useEffect(() => {
+        setTypedText('');
+        setCharIndex(0);
+      }, [accessedIndex]);
+    
 
     useEffect(() => {
         const loadImages = () => {
@@ -96,6 +127,8 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
         }
         if (keysPressed.current['ArrowUp'] && imagePosition.current >= 500) {
             velocity.current = jumpVelocity;
+            console.log(descList[0][accessedIndex])
+            console.log(backgroundPosition.current)
         }
     
         velocity.current += gravity;
@@ -108,6 +141,10 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
 
         if (backgroundPosition.current < -canvasWidth) {
             backgroundPosition.current += canvasWidth;
+        }
+
+        if (backgroundPosition.current == 0 || backgroundPosition.current == -500 || backgroundPosition.current == -90){
+            setAccessedIndex(accessedIndex+1)
         }
 
         if (galImagePosition.current < -canvasWidth) {
@@ -141,7 +178,6 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
         image.current.src = currentImg;
         backgroundImg.current.src = tempbg;
     
-        // Check if the index is within bounds before setting src
         if (galImageIndex < uriList[0].length) {
             galImage.current.src = uriList[0][galImageIndex];
         }
@@ -244,5 +280,9 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
         return () => clearInterval(interval);
     }, [currentImg, reachedEnd]);
 
-    return null;
+    return (
+        <div id="story">
+            <p>{typedText}</p>
+        </div>
+    );
 }
