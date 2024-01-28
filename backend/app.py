@@ -65,7 +65,7 @@ def accessImages():
         return jsonify({'error': 'An error occurred'}), 500
 
 @app.route('/api/getAlbumItems', methods=['POST'])
-def albumItems():
+def getAlbumItems():
     data = request.get_json()
     token = data.get('token')
     album_id = data.get('album_id')
@@ -73,23 +73,30 @@ def albumItems():
     if not token or not album_id:
         return jsonify({'error': 'Token or album ID missing.'}), 400
 
-    google_photos_items_endpoint = f'https://photoslibrary.googleapis.com/v1/albums/{album_id}/mediaItems'
+    # Endpoint to search for media items in an album
+    search_endpoint = 'https://photoslibrary.googleapis.com/v1/mediaItems:search'
 
     headers = {
         'Authorization': f'Bearer {token}',
         'Content-type': 'application/json'
     }
 
+    # The body of the POST request should contain the album ID
+    payload = {
+        'albumId': album_id,
+        'pageSize': 50  # You can adjust the pageSize (max 100)
+    }
+
     try:
-        # Make a request to the Google Photos API to list the media items in the specified album
-        response = requests.get(google_photos_items_endpoint, headers=headers)
-        response.raise_for_status()
+        # Make a POST request to search media items in the album
+        response = requests.post(search_endpoint, headers=headers, json=payload)
+        response.raise_for_status()  # Raises an HTTPError if the HTTP request returned an unsuccessful status code
 
         # Extract URLs of the photos from the response
         items = response.json().get('mediaItems', [])
-        photo_urls = [item['baseUrl'] for item in items]
+        photo_uris = [item['baseUrl'] for item in items]
 
-        return jsonify({'photo_urls': photo_urls}), 200
+        return jsonify({'photo_uris': photo_uris}), 200
 
     except requests.RequestException as e:
         # Handle request exceptions (like network errors)
@@ -98,7 +105,6 @@ def albumItems():
     except Exception as e:
         # Handle other exceptions
         return jsonify({'error': 'An error occurred'}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)

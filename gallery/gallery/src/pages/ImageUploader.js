@@ -5,10 +5,12 @@ import Navbar from "../components/Navbar";
 import "./ImageUploader.css";
 
 import { gapi } from 'gapi-script';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GoogleLogin } from 'react-google-login';
 
 export default function ImageUploader() {
+    const [images, setImages] = useState([]);
+
     const navigate = useNavigate();
     function navTo(){
         navigate('/gallery')
@@ -27,30 +29,48 @@ export default function ImageUploader() {
         gapi.load('client:auth2', start)
     }, [])
 
-    function onSuccess(res){
-        console.log("LOGIN SUCCESS.", res.profileObj)
-
+    function onSuccess(res) {
+        console.log("LOGIN SUCCESS.", res.profileObj);
+    
         const accessToken = res.accessToken;
         console.log("Access Token:", accessToken);
-
-        sendToken(accessToken)
-        navTo()
-
-        gapi.client.setToken({access_token: accessToken});
+    
+        // Set the token for gapi client
+        gapi.client.setToken({ access_token: accessToken });
+    
+        // Send the token to your backend to retrieve the album ID,
+        // then fetch the images, then navigate.
+        sendToken(accessToken).then(() => {
+            // Now that you have the album ID and images, navigate to the gallery.
+            navTo();
+        }).catch(error => {
+            console.error('Error during sendToken or retrieveImages', error);
+        });
     }
 
-    async function retrieveImages(token){
-        const response = await fetch(`http://localhost:5000/api/getAlbumItems`, {
-            method: 'GET',
-            header: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token: token })
-        })
+    async function retrieveImages(token, albumId) {
+        try {
+            const response = await fetch(`http://localhost:5000/api/getAlbumItems`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: token, album_id: albumId })
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            const data = await response.json();
 
-        const data = await response.json();
-        console.log(data)
-
+            console.log(data)
+            setImages(data.photo_uris);  // Assuming `setImages` updates your component's state
+            navTo();  // Navigate to the gallery page
+    
+        } catch (error) {
+            console.error('Error fetching album photos:', error);
+        }
     }
 
     async function sendToken(token) {
@@ -58,21 +78,24 @@ export default function ImageUploader() {
             const response = await fetch(`http://localhost:5000/api/getAlbumID`, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ token: token })
-              });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const data = await response.json();
-          console.log(data)
-
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log(data);
+    
+            return retrieveImages(token, data.album_id);
+    
         } catch (error) {
-          console.log('error', error);
+            console.error('Error sending token', error);
         }
-      }
+    }
 
     function onFailure(res){
         console.log("FAILURE.", res)
