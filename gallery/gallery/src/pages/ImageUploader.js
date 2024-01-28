@@ -1,20 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import forest from "../assets/forest.png";
 import Navbar from "../components/Navbar";
 import "./ImageUploader.css";
 
+import ImageContext from "../context/ImageContext";
+
 import { gapi } from 'gapi-script';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { GoogleLogin } from 'react-google-login';
 
 export default function ImageUploader() {
-    const [images, setImages] = useState([]);
+    const {uriList, addUri, removeUri} = useContext(ImageContext)
 
     const navigate = useNavigate();
     function navTo(){
         navigate('/gallery')
     }
+
+    // useEffect(() => {
+    //     console.log(uriList)
+    // }, [])
 
     const clientId = "1044768649244-j1qtke8g728no98ug6qrsu276qt6tmld.apps.googleusercontent.com"
 
@@ -38,10 +44,7 @@ export default function ImageUploader() {
         // Set the token for gapi client
         gapi.client.setToken({ access_token: accessToken });
     
-        // Send the token to your backend to retrieve the album ID,
-        // then fetch the images, then navigate.
         sendToken(accessToken).then(() => {
-            // Now that you have the album ID and images, navigate to the gallery.
             navTo();
         }).catch(error => {
             console.error('Error during sendToken or retrieveImages', error);
@@ -64,9 +67,9 @@ export default function ImageUploader() {
     
             const data = await response.json();
 
-            console.log(data)
-            setImages(data.photo_uris);  // Assuming `setImages` updates your component's state
-            navTo();  // Navigate to the gallery page
+            await addUri(data.photo_uris);
+            console.log(uriList)
+            navTo();
     
         } catch (error) {
             console.error('Error fetching album photos:', error);
