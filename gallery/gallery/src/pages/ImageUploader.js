@@ -87,9 +87,9 @@ export default function ImageUploader() {
             }
     
             const data = await response.json();
-            console.log(data);
     
-            return retrieveImages(token, data.album_id);
+            const returnedInfo = await retrieveImages(token, data.album_id);
+            return returnedInfo;
     
         } catch (error) {
             console.error('Error sending token', error);
