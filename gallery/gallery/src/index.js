@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import ImageProvider from "./context/ImageProvider";
 import Gallery from './pages/Gallery';
 import ImageUploader from './pages/ImageUploader';
 
@@ -31,6 +32,8 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router = {router}/>
+    <ImageProvider>
+      <RouterProvider router = {router}/>
+    </ImageProvider>
   </React.StrictMode>
 );
