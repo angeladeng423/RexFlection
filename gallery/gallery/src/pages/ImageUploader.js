@@ -47,6 +47,27 @@ export default function ImageUploader() {
         });
     }
 
+    async function retrieveDescription() {
+        for (const item of uriList[0]) {
+            try {
+                const response = await fetch('http://localhost:5000/api/recognize_objects', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image_url: item
+                    })
+                });
+    
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error("ERROR:", error);
+            }
+        }
+    }
+    
     async function retrieveImages(token, albumId) {
         try {
             const response = await fetch(`http://localhost:5000/api/getAlbumItems`, {
@@ -64,7 +85,7 @@ export default function ImageUploader() {
             const data = await response.json();
 
             await addUri(data.photo_uris);
-            console.log(uriList)
+            await retrieveDescription();
             navTo();
     
         } catch (error) {

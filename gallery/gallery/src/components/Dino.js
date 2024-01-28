@@ -212,7 +212,7 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
         }
 
         else if(keysPressed.current['ArrowRight']){
-            imagePositionX.current += 3;
+            imagePositionX.current += 5;
         }
 
         if (keysPressed.current['ArrowUp'] && imagePosition.current >= 500) {

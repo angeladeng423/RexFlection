@@ -15,12 +15,13 @@ co = cohere.Client(cohere_api_key)
 @cohere_api.route('/cohere', methods=['POST'])
 def cohere_route():
     try:
-        images_data = request.files.getlist('image')
+        image_data_list = request.get_json().get('image_list')
         results = []
         global_dict = {}
 
-        for i, image_data in enumerate(images_data):
-            objects = yolor.recognize(image_data.read())
+        for i, image_data in enumerate(image_data_list):
+            objects = yolor.recognize(image_data)
+            print("TEST")
             output_descr = co.generate(
                 model='command',
                 prompt='Given a dictionary of everyday objects and their quantity for example {1: bus, 4: people} extracted from a photo, give a story-like description, do not use key words that aren\'t in the dictionary or do not assume anything that isn\'t already given in the dictionary. Do not give expression of people if they are in image. Don\'t start with \"this is a picture\" rather begin story telling right away, do not use first or second person, give short summary . Example output would have keywords: city, busy, etc. Now try for ' + str(objects),

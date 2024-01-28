@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import requests
 from ..modules.recognizer import YOLORecognizer
 from ultralytics import YOLO
 import cv2
@@ -12,13 +13,27 @@ yolor = YOLORecognizer()
 @yolo_api.route('/recognize_objects', methods=['POST'])
 def recognize_objects():
     try:
-        image_data = request.files['image'].read()
+        # Get the image URL from the request data
+        image_url = request.json.get('image_url')
+        
+        # Fetch the image from the URL
+        response = requests.get(image_url)
+        
+        # Check if the request was successful
+        if response.status_code != 200:
+            return jsonify(error="Failed to fetch image from URL"), 400
+        
+        # Read the image data
+        image_data = response.content
+        
+        # Process the image data with your recognizer
         objects = yolor.recognize(image_data)
         return jsonify(objects)
 
     except Exception as e:
-        return jsonify(error=str(e))
+        return jsonify(error=str(e)), 500
     
+
 # Testing Purposes
 @echo_api.route('/echo', methods=['POST'])
 def echo():

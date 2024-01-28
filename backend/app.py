@@ -45,23 +45,17 @@ def accessImages():
     }
 
     try:
-        # Make a request to the Google Photos API to list the albums
         response = requests.get(google_photos_albums_endpoint, headers=headers)
-        response.raise_for_status()  # Raise an error for bad status codes
+        response.raise_for_status()
 
-        # The list of albums is in the 'albums' field of the response
         albums = response.json().get('albums', [])
         
-        # If you need to access a specific album, you'll need the album ID.
-        # Here we just return the list of albums.
         return jsonify({'album_id': albums[0]['id']})
     
     except requests.RequestException as e:
-        # Handle request exceptions (like network errors)
         return jsonify({'error': str(e)}), e.response.status_code
 
     except Exception as e:
-        # Handle other exceptions
         return jsonify({'error': 'An error occurred'}), 500
 
 @app.route('/api/getAlbumItems', methods=['POST'])
@@ -84,7 +78,7 @@ def getAlbumItems():
     # The body of the POST request should contain the album ID
     payload = {
         'albumId': album_id,
-        'pageSize': 50  # You can adjust the pageSize (max 100)
+        'pageSize': 50
     }
 
     try:
