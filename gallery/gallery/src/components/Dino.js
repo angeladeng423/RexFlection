@@ -1,24 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import dinoRun1 from "../assets/dinoRun1.png";
 import dinoRun2 from "../assets/dinoRun2.png";
 import dinoStill from "../assets/dinoStill.png";
 import endBg from "../assets/endBg.png";
 import tempbg from "../assets/tempbg.png";
-
-import { useContext } from "react";
 import ImageContext from "../context/ImageContext";
 
-export default function Dino({canvasRef, canvasHeight, canvasWidth}){
-    const { uriList } = useContext(ImageContext)
+export default function Dino({canvasRef, canvasHeight, canvasWidth}) {
+    const { uriList } = useContext(ImageContext);
     
     const [reachedEnd, setReachedEnd] = useState(false);
     const [currentImg, setCurrentImg] = useState(dinoStill);
+
+    const [imagesLoaded, setImagesLoaded] = useState(false);
 
     const [galImageIndex, setGalImageIndex] = useState(0);
     const [secondImageIndex, setSecondImageIndex] = useState(2);
 
     const keysPressed = useRef({});
-    const imagePosition = useRef(400)
+    const imagePosition = useRef(400);
     const backgroundPosition = useRef(0);
 
     const image = useRef(new Image());
@@ -28,17 +28,40 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
     const lowerImage = useRef(new Image());
     const nextLowerImage = useRef(new Image());
     const endImage = useRef(new Image());
-    endImage.current.src = endBg;
 
     const velocity = useRef(0);
     const gravity = -2;
-
     const jumpVelocity = 30;
 
-    const galImagePosition = useRef(160)
-    const lowerImagePosition = useRef(627)
-    const nextLowerImagePosition = useRef(627 + canvasWidth)
-    const galImageSecondPosition = useRef(160 + canvasWidth)
+    const galImagePosition = useRef(160);
+    const lowerImagePosition = useRef(627);
+    const nextLowerImagePosition = useRef(627 + canvasWidth);
+    const galImageSecondPosition = useRef(160 + canvasWidth);
+
+    useEffect(() => {
+        const loadImages = () => {
+            let loadedImages = 0;
+            const totalImages = 1 + uriList[0].length; // 1 for the background image + uriList images
+
+            const onImageLoad = () => {
+                loadedImages++;
+                if (loadedImages === totalImages) {
+                    setImagesLoaded(true);
+                }
+            };
+
+            backgroundImg.current.src = tempbg;
+            backgroundImg.current.onload = onImageLoad;
+
+            [dinoRun1, dinoRun2, dinoStill, endBg, ...uriList[0]].forEach(src => {
+                const img = new Image();
+                img.src = src;
+                img.onload = onImageLoad;
+            });
+        };
+
+        loadImages();
+    }, [uriList]);
 
     const handleKeyDown = (e) => {
         keysPressed.current[e.key] = true;
@@ -49,11 +72,8 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
     };
 
     useEffect(() => {
-        console.log(uriList[0])
-
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
-
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
@@ -87,7 +107,7 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
         if (galImagePosition.current < -canvasWidth) {
             if (galImageIndex < uriList[0].length - 1) {
                 galImagePosition.current += canvasWidth * 2;
-                setGalImageIndex(galImageIndex => galImageIndex + 4);
+                setGalImageIndex(galImageIndex => Math.min(galImageIndex + 4, uriList[0].length - 1));
             } else {
                 setReachedEnd(true);
             }
@@ -96,7 +116,7 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
         if (galImageSecondPosition.current < -canvasWidth) {
             if(galImageIndex < uriList[0].length - 1){
                 galImageSecondPosition.current += canvasWidth * 2;
-                setSecondImageIndex(secondImageIndex => secondImageIndex + 4);
+                setSecondImageIndex(secondImageIndex => Math.min(secondImageIndex + 4, uriList[0].length - 1));
             } else {
                 setReachedEnd(true);
             }
@@ -119,7 +139,7 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
         lowerImage.current.src = uriList[0][(galImageIndex + 1)];
         secondGalImage.current.src = uriList[0][secondImageIndex];
         nextLowerImage.current.src = uriList[0][(secondImageIndex + 1)];
-    }, [currentImg, galImageIndex, secondImageIndex]);    
+    }, [galImageIndex, secondImageIndex]);    
 
     function moveBackground(){
         const canvas = canvasRef.current;
@@ -158,10 +178,10 @@ export default function Dino({canvasRef, canvasHeight, canvasWidth}){
                 moveBackground();
                 changeDinoImage();
             }
-        }, 5);
+        }, 1);
     
         return () => clearInterval(interval);
     }, [currentImg, reachedEnd]);
-    
+
     return null;
 }

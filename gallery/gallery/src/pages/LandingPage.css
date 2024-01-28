@@ -82,6 +82,7 @@
     animation: shrinkGrow_medium 3s infinite;
     transition: width 0.5s ease 0.5s;
 }
+
 @keyframes shrinkGrow_medium {
     0% {
         width: 25vw;

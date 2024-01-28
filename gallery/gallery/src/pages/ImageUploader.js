@@ -18,10 +18,6 @@ export default function ImageUploader() {
         navigate('/gallery')
     }
 
-    // useEffect(() => {
-    //     console.log(uriList)
-    // }, [])
-
     const clientId = "1044768649244-j1qtke8g728no98ug6qrsu276qt6tmld.apps.googleusercontent.com"
 
     useEffect(() => {
