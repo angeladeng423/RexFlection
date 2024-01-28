@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap');
+@import 'animate.css';
 
 #landingPage{
     overflow: hidden;
@@ -39,32 +40,117 @@
 #purple{
     background-color: #5B4E78;
     width: 30vw;
+    animation: shrinkGrow_long 3s infinite;
+    transition: width 0.5s ease;
 }
+
+@keyframes shrinkGrow_long {
+    0% {
+        width: 30vw;
+    }
+    50% {
+        width: 20vw;
+    }
+    100% {
+        width: 30vw;
+    }
+}
+
 
 #red{
     background-color: #C94F4F;
     width: 25vw;
+    animation: shrinkGrow_longmedium 3.1s infinite;
+    transition: width 0.6s ease 0.5s;
+}
+
+@keyframes shrinkGrow_longmedium {
+    0% {
+        width: 27vw;
+    }
+    50% {
+        width: 19vw;
+    }
+    100% {
+        width: 27vw;
+    }
 }
 
 #orange{
     background-color: #E3A256;
     width: 20vw;
+    animation: shrinkGrow_medium 3s infinite;
+    transition: width 0.5s ease 0.5s;
+}
+@keyframes shrinkGrow_medium {
+    0% {
+        width: 25vw;
+    }
+    50% {
+        width: 18vw;
+    }
+    100% {
+        width: 25vw;
+    }
 }
 
 #yellow{
     background-color: #FFE76A;
     width: 15vw;
+    animation: shrinkGrow_mediumshort 3s infinite;
+    transition: width 0.2s ease 0.321s;
+}
+
+@keyframes shrinkGrow_mediumshort {
+    0% {
+        width: 24vw;
+    }
+    50% {
+        width: 18vw;
+    }
+    100% {
+        width: 24vw;
+    }
 }
 
 #green{
     background-color: #7DBB73;
     width: 10vw;
+    animation: shrinkGrow_short 3s infinite;
+    transition: width 0.5s ease 0.28s;
+}
+
+@keyframes shrinkGrow_short {
+    0% {
+        width: 23vw;
+    }
+    50% {
+        width: 17vw;
+    }
+    100% {
+        width: 23vw;
+    }
 }
 
 #blue{
     background-color: #73A1BB;
     width: 15vw;
+    animation: shrinkGrow_shortshort 3s infinite;
+    transition: width 0.1s ease 0.3s;
 }
+
+@keyframes shrinkGrow_shortshort {
+    0% {
+        width: 24vw;
+    }
+    50% {
+        width: 18.5vw;
+    }
+    100% {
+        width: 24vw;
+    }
+}
+
 
 #highway{
     top: 30vh;
