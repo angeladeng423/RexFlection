@@ -60,7 +60,7 @@
 #red{
     background-color: #C94F4F;
     width: 25vw;
-    animation: shrinkGrow_longmedium 3.1s infinite;
+    animation: shrinkGrow_longmedium 3s infinite;
     transition: width 0.6s ease 0.5s;
 }
 
@@ -88,7 +88,7 @@
         width: 25vw;
     }
     50% {
-        width: 18vw;
+        width: 18.5vw;
     }
     100% {
         width: 25vw;
@@ -99,7 +99,7 @@
     background-color: #FFE76A;
     width: 15vw;
     animation: shrinkGrow_mediumshort 3s infinite;
-    transition: width 0.2s ease 0.321s;
+    transition: width 0.2s ease 0.5s;
 }
 
 @keyframes shrinkGrow_mediumshort {
@@ -118,7 +118,7 @@
     background-color: #7DBB73;
     width: 10vw;
     animation: shrinkGrow_short 3s infinite;
-    transition: width 0.5s ease 0.28s;
+    transition: width 0.5s ease 0.5s;
 }
 
 @keyframes shrinkGrow_short {
@@ -137,18 +137,18 @@
     background-color: #73A1BB;
     width: 15vw;
     animation: shrinkGrow_shortshort 3s infinite;
-    transition: width 0.1s ease 0.3s;
+    transition: width 0.1s ease 0.8s;
 }
 
 @keyframes shrinkGrow_shortshort {
     0% {
-        width: 24vw;
+        width: 20vw;
     }
     50% {
-        width: 18.5vw;
+        width: 16vw;
     }
     100% {
-        width: 24vw;
+        width: 20vw;
     }
 }
 
